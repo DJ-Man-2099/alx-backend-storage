@@ -1,4 +1,4 @@
--- 7th Task
+-- 8th Task
 DROP PROCEDURE IF EXISTS `ComputeAverageScoreForUser`;
 DELIMITER // 
 CREATE PROCEDURE `ComputeAverageScoreForUser` (IN user_id INT) BEGIN
