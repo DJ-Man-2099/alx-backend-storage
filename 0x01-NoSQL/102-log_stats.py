@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 13th Task """
+""" 3rd Optional Task """
 from pymongo import MongoClient
 
 
@@ -27,3 +27,11 @@ if __name__ == "__main__":
         "path": "/status"
     })
     print(f"{status_check_count} status check")
+    ips = logs_collection.aggregate([
+        {"$group": {"_id": "$ip", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ])
+    print("IPs:")
+    for ip in ips:
+        print(f"\t{ip.get('_id')}: {ip.get('count')}")
