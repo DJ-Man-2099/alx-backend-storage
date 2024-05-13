@@ -5,7 +5,7 @@ from pymongo.collection import Collection
 
 
 def schools_by_topic(mongo_collection,
-                     topic: str):
+                     topic):
     """ List all documents in Python """
     schools = mongo_collection.find({"topics": topic})
 
