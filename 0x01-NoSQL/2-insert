@@ -1,0 +1,3 @@
+// 3rd Task
+
+db.school.insertOne({name: 'Holberton school'})
