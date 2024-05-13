@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """ 13th Task """
-from typing import Dict, List
 from pymongo import MongoClient
-from pymongo.collection import Collection
 
 
 if __name__ == "__main__":
