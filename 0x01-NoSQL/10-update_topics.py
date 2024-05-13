@@ -2,7 +2,6 @@
 """ 11th Task """
 from typing import Dict, List
 from pymongo.collection import Collection
-from bson import ObjectId
 
 
 def update_topics(mongo_collection: Collection, name: str,
