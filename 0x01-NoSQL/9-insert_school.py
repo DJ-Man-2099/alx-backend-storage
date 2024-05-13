@@ -5,6 +5,6 @@ from pymongo.collection import Collection
 from bson import ObjectId
 
 
-def insert_school(mongo_collection: Collection, **kwargs) -> ObjectId:
+def insert_school(mongo_collection, **kwargs):
     """ List all documents in Python """
     return mongo_collection.insert_one(kwargs).inserted_id

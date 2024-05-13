@@ -4,7 +4,7 @@ from typing import Dict, List
 from pymongo.collection import Collection
 
 
-def top_students(mongo_collection: Collection) -> List[Dict]:
+def top_students(mongo_collection):
     """ List all documents in Python """
     return mongo_collection.aggregate([{
         "$set": {
