@@ -2,8 +2,11 @@
 """ 11th Task """
 
 
-def update_topics(mongo_collection, name,
-                  topics):
+import typing
+
+
+def update_topics(mongo_collection, name: str,
+                  topics: typing.List[str]):
     """ List all documents in Python """
-    mongo_collection.updateMany({"name": name},
+    mongo_collection.update_one({"name": name},
                                 {"$set": {"topics": topics}})
