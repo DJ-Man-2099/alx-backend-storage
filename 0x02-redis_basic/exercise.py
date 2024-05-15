@@ -10,14 +10,15 @@ def count_calls(method: Callable) -> Callable:
     """Creates and returns function that increments the count \
         for that key every time the method is called and returns \
         the value returned by the original method"""
-    method_key = method.__qualname__
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         """ Increments count """
-        # name = method.__qualname__
-        self._redis.incr(method_key)
-        return method(*args, **kwargs)
+        name = method.__qualname__
+        # Don't assign self to another variable
+        redis_instance = self._redis
+        redis_instance.incr(name)
+        return method(self, *args, **kwargs)
     return wrapper
     return wrapper
 
