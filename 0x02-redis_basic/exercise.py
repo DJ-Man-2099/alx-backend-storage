@@ -28,3 +28,11 @@ class Cache:
             return fn(value)
         elif value is not None:
             return value
+
+    def get_str(self, key: str) -> str:
+        """get string"""
+        return self.get(key, str)
+
+    def get_int(self, key: str) -> str:
+        """get int"""
+        return self.get(key, int)
