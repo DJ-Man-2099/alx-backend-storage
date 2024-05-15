@@ -3,14 +3,14 @@
 import typing
 import uuid
 import redis
-import functools
+from functools import wraps
 
 
 def count_calls(method: typing.Callable) -> typing.Callable:
     """takes a single method Callable argument
     and returns a Callable"""
-    @functools.wraps(method)
-    def wrapper(*args: typing.List, **kwds: typing.Dict) -> typing.Callable:
+    @wraps(method)
+    def wrapper(*args, **kwds):
         name = method.__qualname__
         """ Increments count """
         redis_instance = args[0]
