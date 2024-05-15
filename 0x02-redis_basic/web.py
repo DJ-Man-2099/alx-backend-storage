@@ -6,14 +6,13 @@ import redis
 from functools import wraps
 from typing import Any, Callable, Dict, List
 
-redis = redis.Redis()
-
 
 def track_access(method: Callable) -> Callable:
     """Tracks Access"""
     @wraps(method)
     def wrapper(url, *args, **kwargs):
         """Wrapper"""
+        redis = redis.Redis()
         key = f"count:{url}"
         cache = f"{url}"
         redis.incr(key)
