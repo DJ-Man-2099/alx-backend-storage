@@ -15,7 +15,8 @@ def track_access(method: Callable) -> Callable:
         redis_instance = Redis()
         key = f"count:{url}"
         cache = f"{url}"
-        count = redis_instance.incr(key)
+        redis_instance.incr(key)
+        count = redis_instance.get(key).decode('utf-8')
         redis_instance.set(cache, count, ex=10)
         return method(url, *args, **kwargs)
     return wrapper
