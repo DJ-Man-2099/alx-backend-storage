@@ -7,7 +7,7 @@ from functools import wraps
 from typing import Any, Callable, Dict, List
 
 
-def track_access(method: Callable) -> Callable:
+def track_and_cache(method: Callable) -> Callable:
     """Tracks Access"""
     @wraps(method)
     def wrapper(url, *args, **kwargs):
@@ -16,9 +16,8 @@ def track_access(method: Callable) -> Callable:
         key = f"count:{url}"
         cache = f"{url}"
         redis_instance.incr(key)
-        # count = redis_instance.get(key)
         cached = redis_instance.get(cache)
-        if cached:
+        if cached is not None:
             return cached.decode('utf-8')
         response = method(url, *args, **kwargs)
         redis_instance.setex(cache, 10, response)
@@ -26,7 +25,7 @@ def track_access(method: Callable) -> Callable:
     return wrapper
 
 
-@track_access
+@track_and_cache
 def get_page(url: str) -> str:
     """uses the requests module
     to obtain the HTML content of a particular URL
