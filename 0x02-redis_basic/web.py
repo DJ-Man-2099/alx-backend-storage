@@ -17,7 +17,8 @@ def track_access(method: Callable) -> Callable:
         old_value = redis_instance.get(key)
         if old_value is not None:
             redis_instance.set(key, int(old_value) + 1, ex=10)
-        redis_instance.set(key, 1, ex=10)
+        else:
+            redis_instance.set(key, 1, ex=10)
         return method(url, *args, **kwargs)
     return wrapper
 
