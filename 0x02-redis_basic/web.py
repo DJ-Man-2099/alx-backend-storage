@@ -15,10 +15,10 @@ def track_and_cache(method: Callable) -> Callable:
         redis_instance = redis.Redis()
         key = f"count:{url}"
         cache = f"{url}"
-        redis_instance.incr(key)
         cached = redis_instance.get(cache)
         if cached is not None:
             return cached.decode('utf-8')
+        redis_instance.incr(key)
         response = method(url, *args, **kwargs)
         redis_instance.setex(cache, 10, response)
         return response
