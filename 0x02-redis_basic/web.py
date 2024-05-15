@@ -1,36 +1,24 @@
 #!/usr/bin/env python3
-""" Optional Task 1 """
-
+'''A module with tools for request caching and tracking.
+'''
+import redis
 import requests
-from redis import Redis
-from functools import wraps
-from typing import Callable
+from datetime import timedelta
 
 
-def track_access(method: Callable) -> Callable:
-    """Tracks Access"""
-    @wraps(method)
-    def wrapper(url, *args, **kwargs):
-        """Wrapper"""
-        redis_instance = Redis()
-        key = f"count:{url}"
-        cache = f"{url}"
-        redis_instance.set(cache, 0)
-        redis_instance.incr(key)
-        # count = redis_instance.get(key)
-        redis_instance.setex(cache, 10, redis_instance.get(cache))
-        return method(url, *args, **kwargs)
-    return wrapper
-
-
-@track_access
 def get_page(url: str) -> str:
-    """uses the requests module
-    to obtain the HTML content of a particular URL
-    and returns it"""
-    response = requests.get(url)
-    return response.text
-
-
-if __name__ == "__main__":
-    get_page("http://slowwly.robertomurray.co.uk")
+    '''Returns the content of a URL after caching the request's response,
+    and tracking the request.
+    '''
+    if url is None or len(url.strip()) == 0:
+        return ''
+    redis_store = redis.Redis()
+    res_key = 'result:{}'.format(url)
+    req_key = 'count:{}'.format(url)
+    result = redis_store.get(res_key)
+    if result is not None:
+        redis_store.incr(req_key)
+        return result
+    result = requests.get(url).content.decode('utf-8')
+    redis_store.setex(res_key, timedelta(seconds=10), result)
+    return result
