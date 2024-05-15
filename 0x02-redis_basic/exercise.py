@@ -9,10 +9,9 @@ from functools import wraps
 def count_calls(method: typing.Callable) -> typing.Callable:
     """takes a single method Callable argument
     and returns a Callable"""
-    name = method.__qualname__
-
     @wraps(method)
     def wrapper(*args: typing.List, **kwds: typing.Dict) -> typing.Callable:
+        name = method.__qualname__
         """ Increments count """
         redis_instance = args[0]
         redis_instance._redis.incr(name)
@@ -37,7 +36,6 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    @count_calls
     def get(self, key: str, fn: typing.Optional[typing.Callable] = None) \
             -> typing.Union[str, bytes, int, float]:
         """ gets value and converts it to the desired format"""
@@ -47,7 +45,6 @@ class Cache:
         elif value is not None:
             return value
 
-    @count_calls
     def get_str(self, key: str) -> str:
         """get string"""
         return self.get(key, str)
