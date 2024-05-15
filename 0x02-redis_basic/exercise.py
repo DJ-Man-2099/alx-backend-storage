@@ -10,7 +10,7 @@ def count_calls(method: typing.Callable) -> typing.Callable:
     """takes a single method Callable argument
     and returns a Callable"""
     @wraps(method)
-    def wrapper(self: Cache, *args: typing.List, **kwds: typing.Dict) \
+    def wrapper(self, *args: typing.List, **kwds: typing.Dict) \
             -> typing.Callable:
         name = method.__qualname__
         """ Increments count """
