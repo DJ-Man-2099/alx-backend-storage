@@ -39,20 +39,19 @@ def count_calls(method: Callable) -> Callable:
 
 def replay(fn: Callable):
     """display the history of calls of a particular function"""
-    redis_instance = redis.Redis()
     method_name = fn.__qualname__
+    redis_instance = fn.__self__._redis
     input_key = method_name + ":inputs"
     output_key = method_name + ":outputs"
     count = redis_instance.get(method_name)
     if count is not None:
         count = int(count)
-        inputs = list(map(lambda s: s.decode("utf-8"),
-                          redis_instance.lrange(input_key, 0, -1) or []))
-        outputs = list(map(lambda s: s.decode("utf-8"),
-                           redis_instance.lrange(output_key, 0, -1) or []))
+        IOTuple = zip(redis_instance.lrange(input_key, 0, -1),
+                      redis_instance.lrange(output_key, 0, -1))
         print(f"{method_name} was called {count} times:")
-        for i in range(count):
-            print(f"{method_name}(*{inputs[i]}) -> {outputs[i]}")
+        for inp, outp in list(IOTuple):
+            input, output = inp.decode("utf-8"), outp.decode("utf-8")
+            print(f"{method_name}(*{input}) -> {output}")
 
 
 class Cache:
