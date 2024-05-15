@@ -13,9 +13,13 @@ def count_calls(method: Callable) -> Callable:
     method_key = method.__qualname__
 
     @wraps(method)
-    def wrapper(self, *args, **kwargs):
-        self._redis.incr(method_key)
-        return method(self, *args, **kwargs)
+    def wrapper(*args, **kwargs):
+        """ Increments count """
+        # name = method.__qualname__
+        redis_instance = args[0]
+        redis_instance._redis.incr(method_key)
+        return method(*args, **kwargs)
+    return wrapper
     return wrapper
 
 
