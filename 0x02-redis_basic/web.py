@@ -1,34 +1,41 @@
 #!/usr/bin/env python3
-""" expiring web cache module """
+""" Optional Task 1 """
 
-import redis
 import requests
-from typing import Callable
+import redis
 from functools import wraps
+from typing import Any, Callable, Dict, List
 
 redis = redis.Redis()
 
 
-def wrap_requests(fn: Callable) -> Callable:
-    """ Decorator wrapper """
-
-    @wraps(fn)
-    def wrapper(url):
-        """ Wrapper for decorator guy """
-        redis.incr(f"count:{url}")
-        cached_response = redis.get(f"cached:{url}")
-        if cached_response:
-            return cached_response.decode('utf-8')
-        result = fn(url)
-        redis.setex(f"cached:{url}", 10, result)
-        return result
-
+def track_access(method: Callable) -> Callable:
+    """Tracks Access"""
+    @wraps(method)
+    def wrapper(url, *args, **kwargs):
+        """Wrapper"""
+        key = f"count:{url}"
+        cache = f"{url}"
+        redis.incr(key)
+        # count = redis_instance.get(key)
+        cached = redis.get(cache)
+        if cached:
+            return cached.decode('utf-8')
+        response = method(url, *args, **kwargs)
+        redis.setex(cache, 10, response)
+        return response
     return wrapper
 
 
-@wrap_requests
+@track_access
 def get_page(url: str) -> str:
-    """get page self descriptive
-    """
+    """uses the requests module
+    to obtain the HTML content of a particular URL
+    and returns it"""
     response = requests.get(url)
     return response.text
+
+
+if __name__ == "__main__":
+    """Main function"""
+    get_page("http://slowwly.robertomurray.co.uk")
