@@ -24,8 +24,8 @@ print("----------------------")
 print(get_page(url))
 print("----------------------")
 
-print(redis.get(f"count:{url}"))
+print(redis.get(f"{url}"))
 
 sleep(10)
 
-print(redis.get(f"count:{url}"))
+print(redis.get(f"{url}"))
