@@ -2,7 +2,7 @@
 """ Optional Task 1 """
 
 import requests
-from redis import Redis
+import redis
 from functools import wraps
 from typing import Any, Callable, Dict, List
 
@@ -12,16 +12,16 @@ def track_access(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(url, *args, **kwargs):
         """Wrapper"""
-        redis = Redis()
+        redis_instance = redis.Redis()
         key = f"count:{url}"
         cache = f"{url}"
-        redis.incr(key)
+        redis_instance.incr(key)
         # count = redis_instance.get(key)
-        cached = redis.get(cache)
+        cached = redis_instance.get(cache)
         if cached:
             return cached.decode('utf-8')
         response = method(url, *args, **kwargs)
-        redis.setex(cache, 10, response)
+        redis_instance.setex(cache, 10, response)
         return response
     return wrapper
 
