@@ -2,9 +2,9 @@
 """
 Main file
 """
-import redis
+# import redis
 
-Cache = __import__('exercise').Cache
+# Cache = __import__('exercise').Cache
 
 # cache = Cache()
 
