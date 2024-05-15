@@ -21,7 +21,7 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: typing.Callable):
+    def get(self, key: str, fn: typing.Callable) -> typing.Union[str, bytes, int, float]:
         """ gets value and converts it to the desired format"""
         value = self._redis.get(key)
         if value is not None and fn is not None:
