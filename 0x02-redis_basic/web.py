@@ -29,3 +29,7 @@ def get_page(url: str) -> str:
     and returns it"""
     response = requests.get(url)
     return response.text
+
+
+if __name__ == "__main__":
+    get_page("http://google.com")
