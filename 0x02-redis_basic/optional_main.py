@@ -10,7 +10,7 @@ get_page = __import__('web').get_page
 redis = Redis()
 
 
-url = "http://google.com"
+url = "http://slowwly.robertomurray.co.uk"
 print(get_page(url))
 print("----------------------")
 
