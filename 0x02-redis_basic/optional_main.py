@@ -12,20 +12,9 @@ redis = Redis()
 
 url = "http://slowwly.robertomurray.co.uk"
 print(get_page(url))
-print("----------------------")
-
+print("---------------------------")
 print(get_page(url))
-print("----------------------")
-print(redis.get(f"count:{url}"))
-
-print(get_page(url))
-print("----------------------")
-
-print(get_page(url))
-print("----------------------")
-
-print(redis.get(f"{url}"))
 
 sleep(10)
 
-print(redis.get(f"{url}"))
+print(get_page(url))
