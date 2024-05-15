@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """ Task 1 """
-import typing
+from typing import Callable, Optional, Union
 import uuid
 import redis
 from functools import wraps
 
 
-def count_calls(method: typing.Callable) -> typing.Callable:
-    """takes a single method Callable argument
-    and returns a Callable"""
+def count_calls(method: Callable) -> Callable:
+    """Creates and returns function that increments the count \
+        for that key every time the method is called and returns \
+        the value returned by the original method"""
+    method_key = method.__qualname__
+
     @wraps(method)
-    def wrapper(*args, **kwds):
-        name = method.__qualname__
-        """ Increments count """
-        redis_instance = args[0]
-        redis_instance._redis.incr(name)
-        return method(*args, **kwds)
+    def wrapper(self, *args, **kwargs):
+        self._redis.incr(method_key)
+        return method(self, *args, **kwargs)
     return wrapper
 
 
@@ -28,7 +28,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
-    def store(self, data: typing.Union[str, bytes, int, float]) -> str:
+    def store(self, data: Union[str, bytes, int, float]) -> str:
         """generate a random key (e.g. using uuid),
         store the input data in Redis using the random key
         and return the key"""
@@ -36,8 +36,8 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: typing.Optional[typing.Callable] = None) \
-            -> typing.Union[str, bytes, int, float]:
+    def get(self, key: str, fn: Optional[Callable] = None) \
+            -> Union[str, bytes, int, float]:
         """ gets value and converts it to the desired format"""
         value = self._redis.get(key)
         if value is not None and fn is not None:
