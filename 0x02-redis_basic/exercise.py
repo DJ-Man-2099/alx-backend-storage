@@ -9,10 +9,11 @@ from functools import wraps
 def count_calls(method: typing.Callable) -> typing.Callable:
     """takes a single method Callable argument
     and returns a Callable"""
+    name = method.__qualname__
+
     @wraps(method)
     def wrapper(*args: typing.List, **kwds: typing.Dict) -> typing.Callable:
         """ Increments count """
-        name = method.__qualname__
         redis_instance = args[0]
         redis_instance._redis.incr(name)
         return method(*args, **kwds)
