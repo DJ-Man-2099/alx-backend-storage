@@ -10,7 +10,7 @@ def count_calls(method: typing.Callable) -> typing.Callable:
     """takes a single method Callable argument
     and returns a Callable"""
     @wraps(method)
-    def wrapper(*args, **kwds):
+    def wrapper(*args, **kwds) -> typing.Callable:
         """ Increments count """
         name = method.__qualname__
         redis_instance = args[0]
