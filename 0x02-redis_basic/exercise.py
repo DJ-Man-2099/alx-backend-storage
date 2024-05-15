@@ -8,7 +8,7 @@ import redis
 class Cache:
     """Cache class"""
 
-    def __init__(self) -> None:
+    def __init__(self):
         """Constructor"""
         self._redis = redis.Redis()
         self._redis.flushdb()
