@@ -20,3 +20,11 @@ class Cache:
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
+
+    def get(self, key: str, fn: typing.Callable):
+        """ gets value and converts it to the desired format"""
+        value = self._redis.get(key)
+        if value is not None and fn is not None:
+            return fn(value)
+        elif value is not None:
+            return value
