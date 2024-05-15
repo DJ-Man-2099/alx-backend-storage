@@ -3,6 +3,20 @@
 import typing
 import uuid
 import redis
+from functools import wraps
+
+
+def count_calls(method: typing.Callable) -> typing.Callable:
+    """takes a single method Callable argument
+    and returns a Callable"""
+    @wraps(method)
+    def wrapper(*args, **kwds):
+        """ Increments count """
+        name = method.__qualname__
+        redis_instance = args[0]
+        redis_instance._redis.incr(name)
+        return method(*args, **kwds)
+    return wrapper
 
 
 class Cache:
@@ -13,6 +27,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: typing.Union[str, bytes, int, float]) -> str:
         """generate a random key (e.g. using uuid),
         store the input data in Redis using the random key
@@ -21,6 +36,7 @@ class Cache:
         self._redis.set(key, data)
         return key
 
+    @count_calls
     def get(self, key: str, fn: typing.Optional[typing.Callable] = None) \
             -> typing.Union[str, bytes, int, float]:
         """ gets value and converts it to the desired format"""
@@ -30,6 +46,7 @@ class Cache:
         elif value is not None:
             return value
 
+    @count_calls
     def get_str(self, key: str) -> str:
         """get string"""
         return self.get(key, str)
