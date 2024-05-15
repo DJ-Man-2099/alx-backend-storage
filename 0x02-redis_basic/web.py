@@ -1,21 +1,37 @@
 #!/usr/bin/env python3
-"""
-create a web cach
-"""
-import redis
+""" Optional Task 1 """
+
 import requests
-rc = redis.Redis()
-count = 0
+from redis import Redis
+from functools import wraps
+from typing import Callable
 
 
+def track_access(method: Callable) -> Callable:
+    """Tracks Access"""
+    @wraps(method)
+    def wrapper(url, *args, **kwargs):
+        """Wrapper"""
+        redis_instance = Redis()
+        key = f"count:{url}"
+        cache = f"{url}"
+        redis_instance.set(cache, 0)
+        redis_instance.incr(key)
+        # count = redis_instance.get(key)
+        response = method(url, *args, **kwargs)
+        redis_instance.setex(cache, 10, response)
+        return response
+    return wrapper
+
+
+@track_access
 def get_page(url: str) -> str:
-    """ get a page and cach value"""
-    rc.set(f"cached:{url}", count)
-    resp = requests.get(url)
-    rc.incr(f"count:{url}")
-    rc.setex(f"cached:{url}", 10, rc.get(f"cached:{url}"))
-    return resp.text
+    """uses the requests module
+    to obtain the HTML content of a particular URL
+    and returns it"""
+    response = requests.get(url)
+    return response.text
 
 
 if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
+    get_page("http://slowwly.robertomurray.co.uk")
