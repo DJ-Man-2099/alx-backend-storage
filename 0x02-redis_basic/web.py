@@ -14,11 +14,9 @@ def track_access(method: Callable) -> Callable:
         """Wrapper"""
         redis_instance = Redis()
         key = f"count:{url}"
-        old_value = redis_instance.get(key)
-        if old_value is not None:
-            redis_instance.set(key, int(old_value) + 1, ex=10)
-        else:
-            redis_instance.set(key, 1, ex=10)
+        cache = f"{url}"
+        count = redis_instance.incr(key)
+        redis_instance.set(cache, count, ex=10)
         return method(url, *args, **kwargs)
     return wrapper
 
@@ -30,7 +28,3 @@ def get_page(url: str) -> str:
     and returns it"""
     response = requests.get(url)
     return response.text
-
-
-if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
