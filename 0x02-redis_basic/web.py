@@ -4,18 +4,17 @@
 import requests
 from redis import Redis
 from functools import wraps
-from typing import Callable
+from typing import Any, Callable, Dict, List
 
 
 def track_access(method: Callable) -> Callable:
     """Tracks Access"""
     @wraps(method)
-    def wrapper(url, *args, **kwargs):
+    def wrapper(url: str, *args: List, **kwargs: Dict) -> Any:
         """Wrapper"""
         redis_instance = Redis()
         key = f"count:{url}"
         cache = f"{url}"
-        redis_instance.set(cache, 0)
         redis_instance.incr(key)
         # count = redis_instance.get(key)
         response = method(url, *args, **kwargs)
@@ -34,4 +33,5 @@ def get_page(url: str) -> str:
 
 
 if __name__ == "__main__":
+    """Main function"""
     get_page("http://slowwly.robertomurray.co.uk")
