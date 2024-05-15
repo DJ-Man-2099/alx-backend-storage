@@ -43,14 +43,16 @@ def replay(fn: Callable):
     method_name = fn.__qualname__
     input_key = method_name + ":inputs"
     output_key = method_name + ":outputs"
-    count = int(redis_instance.get(method_name) or 0)
-    inputs = list(map(lambda s: s.decode("utf-8"),
-                      redis_instance.lrange(input_key, 0, -1) or []))
-    outputs = list(map(lambda s: s.decode("utf-8"),
-                       redis_instance.lrange(output_key, 0, -1) or []))
-    print(f"{method_name} was called {count} times:")
-    for i in range(count):
-        print(f"{method_name}(*{inputs[i]}) -> {outputs[i]}")
+    count = redis_instance.get(method_name)
+    if count is not None:
+        count = int(count)
+        inputs = list(map(lambda s: s.decode("utf-8"),
+                          redis_instance.lrange(input_key, 0, -1) or []))
+        outputs = list(map(lambda s: s.decode("utf-8"),
+                           redis_instance.lrange(output_key, 0, -1) or []))
+        print(f"{method_name} was called {count} times:")
+        for i in range(count):
+            print(f"{method_name}(*{inputs[i]}) -> {outputs[i]}")
 
 
 class Cache:

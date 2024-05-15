@@ -61,3 +61,4 @@ print("inputs: {}".format(inputs))
 print("outputs: {}".format(outputs))
 
 replay(cache.store)
+replay(cache.get)
