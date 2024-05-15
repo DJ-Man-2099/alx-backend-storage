@@ -22,7 +22,6 @@ def count_calls(method: typing.Callable) -> typing.Callable:
 class Cache:
     """Cache class"""
 
-    @count_calls
     def __init__(self):
         """Constructor"""
         self._redis = redis.Redis()
