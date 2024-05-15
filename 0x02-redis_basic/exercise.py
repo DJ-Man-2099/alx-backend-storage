@@ -6,6 +6,22 @@ import redis
 from functools import wraps
 
 
+def call_history(method: Callable) -> Callable:
+    """ store the history of inputs and outputs for a particular function"""
+    input_key = method.__qualname__ + ":inputs"
+    output_key = method.__qualname__ + ":outputs"
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """ gets args, output """
+        # Don't assign args to another variable
+        self._redis.rpush(input_key, str(args))
+        result = method(self, *args, **kwargs)
+        self._redis.rpush(output_key, str(result))
+        return result
+    return wrapper
+
+
 def count_calls(method: Callable) -> Callable:
     """Creates and returns function that increments the count \
         for that key every time the method is called and returns \
@@ -15,7 +31,7 @@ def count_calls(method: Callable) -> Callable:
     def wrapper(self, *args, **kwargs):
         """ Increments count """
         name = method.__qualname__
-        # Don't assign self to another variable
+        # Don't assign args to another variable
         self._redis.incr(name)
         return method(self, *args, **kwargs)
     return wrapper
@@ -30,6 +46,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """generate a random key (e.g. using uuid),
         store the input data in Redis using the random key
