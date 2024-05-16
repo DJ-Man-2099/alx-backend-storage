@@ -14,7 +14,7 @@ def track_and_cache(method: Callable) -> Callable:
         """Wrapper"""
         redis_instance = redis.Redis()
         key = f"count:{url}"
-        cache = f"cache:{url}"
+        cache = f"{url}"
         redis_instance.incr(key)
         cached = redis_instance.get(cache)
         if cached is not None:
